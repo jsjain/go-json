@@ -18,7 +18,7 @@ func UnorderedMap() EncodeOptionFunc {
 }
 
 // TagName
-func TagName(tagName string) EncodeOptionFunc {
+func EncodeWithTag(tagName string) EncodeOptionFunc {
 	return func(opt *EncodeOption) {
 		opt.TagName = tagName
 	}
@@ -78,8 +78,8 @@ func DecodeFieldPriorityFirstWin() DecodeOptionFunc {
 	}
 }
 
-func DecodeWithCustomTag(tag string) DecodeOptionFunc {
+func DecodeWithTag(tagName string) DecodeOptionFunc {
 	return func(opt *DecodeOption) {
-		opt.TagName = tag
+		opt.TagName = tagName
 	}
 }
