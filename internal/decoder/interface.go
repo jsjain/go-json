@@ -22,7 +22,7 @@ type interfaceDecoder struct {
 	stringDecoder *stringDecoder
 }
 
-func newEmptyInterfaceDecoder(structName, fieldName string) *interfaceDecoder {
+func newEmptyInterfaceDecoder(structName, fieldName, tagName string) *interfaceDecoder {
 	ifaceDecoder := &interfaceDecoder{
 		typ:        emptyInterfaceType,
 		structName: structName,
@@ -39,7 +39,7 @@ func newEmptyInterfaceDecoder(structName, fieldName string) *interfaceDecoder {
 		ifaceDecoder,
 		emptyInterfaceType,
 		emptyInterfaceType.Size(),
-		structName, fieldName,
+		structName, fieldName, tagName,
 	)
 	ifaceDecoder.mapDecoder = newMapDecoder(
 		interfaceMapType,
@@ -53,8 +53,8 @@ func newEmptyInterfaceDecoder(structName, fieldName string) *interfaceDecoder {
 	return ifaceDecoder
 }
 
-func newInterfaceDecoder(typ *runtime.Type, structName, fieldName string) *interfaceDecoder {
-	emptyIfaceDecoder := newEmptyInterfaceDecoder(structName, fieldName)
+func newInterfaceDecoder(typ *runtime.Type, structName, fieldName, tagName string) *interfaceDecoder {
+	emptyIfaceDecoder := newEmptyInterfaceDecoder(structName, fieldName, tagName)
 	stringDecoder := newStringDecoder(structName, fieldName)
 	return &interfaceDecoder{
 		typ:        typ,
@@ -64,7 +64,7 @@ func newInterfaceDecoder(typ *runtime.Type, structName, fieldName string) *inter
 			emptyIfaceDecoder,
 			emptyInterfaceType,
 			emptyInterfaceType.Size(),
-			structName, fieldName,
+			structName, fieldName, tagName,
 		),
 		mapDecoder: newMapDecoder(
 			interfaceMapType,
@@ -327,7 +327,7 @@ func (d *interfaceDecoder) DecodeStream(s *Stream, depth int64, p unsafe.Pointer
 		*(*interface{})(p) = nil
 		return nil
 	}
-	decoder, err := CompileToGetDecoder(typ)
+	decoder, err := CompileToGetDecoder(typ, "json")
 	if err != nil {
 		return err
 	}
@@ -345,6 +345,10 @@ func (d *interfaceDecoder) errUnmarshalType(typ reflect.Type, offset int64) *err
 }
 
 func (d *interfaceDecoder) Decode(ctx *RuntimeContext, cursor, depth int64, p unsafe.Pointer) (int64, error) {
+	tagName := ctx.Option.TagName
+	if tagName == "" {
+		tagName = "json"
+	}
 	buf := ctx.Buf
 	runtimeInterfaceValue := *(*interface{})(unsafe.Pointer(&emptyInterface{
 		typ: d.typ,
@@ -392,7 +396,7 @@ func (d *interfaceDecoder) Decode(ctx *RuntimeContext, cursor, depth int64, p un
 		**(**interface{})(unsafe.Pointer(&p)) = nil
 		return cursor, nil
 	}
-	decoder, err := CompileToGetDecoder(typ)
+	decoder, err := CompileToGetDecoder(typ, tagName)
 	if err != nil {
 		return 0, err
 	}

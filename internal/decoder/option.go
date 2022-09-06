@@ -10,6 +10,7 @@ const (
 )
 
 type Option struct {
+	TagName string
 	Flags   OptionFlags
 	Context context.Context
 }

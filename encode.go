@@ -146,6 +146,9 @@ func marshal(v interface{}, optFuncs ...EncodeOptionFunc) ([]byte, error) {
 	for _, optFunc := range optFuncs {
 		optFunc(ctx.Option)
 	}
+	if ctx.Option.TagName == "" {
+		ctx.Option.TagName = "json"
+	}
 
 	buf, err := encode(ctx, v)
 	if err != nil {
@@ -223,7 +226,7 @@ func encode(ctx *encoder.RuntimeContext, v interface{}) ([]byte, error) {
 	typ := header.typ
 
 	typeptr := uintptr(unsafe.Pointer(typ))
-	codeSet, err := encoder.CompileToGetCodeSet(ctx, typeptr)
+	codeSet, err := encoder.CompileToGetCodeSet(ctx, typeptr, ctx.Option.TagName)
 	if err != nil {
 		return nil, err
 	}
@@ -251,7 +254,7 @@ func encodeNoEscape(ctx *encoder.RuntimeContext, v interface{}) ([]byte, error) 
 	typ := header.typ
 
 	typeptr := uintptr(unsafe.Pointer(typ))
-	codeSet, err := encoder.CompileToGetCodeSet(ctx, typeptr)
+	codeSet, err := encoder.CompileToGetCodeSet(ctx, typeptr, ctx.Option.TagName)
 	if err != nil {
 		return nil, err
 	}
@@ -278,7 +281,7 @@ func encodeIndent(ctx *encoder.RuntimeContext, v interface{}, prefix, indent str
 	typ := header.typ
 
 	typeptr := uintptr(unsafe.Pointer(typ))
-	codeSet, err := encoder.CompileToGetCodeSet(ctx, typeptr)
+	codeSet, err := encoder.CompileToGetCodeSet(ctx, typeptr, ctx.Option.TagName)
 	if err != nil {
 		return nil, err
 	}

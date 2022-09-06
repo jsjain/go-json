@@ -34,11 +34,12 @@ func unmarshal(data []byte, v interface{}, optFuncs ...DecodeOptionFunc) error {
 	if err := validateType(header.typ, uintptr(header.ptr)); err != nil {
 		return err
 	}
-	dec, err := decoder.CompileToGetDecoder(header.typ)
+	ctx := decoder.TakeRuntimeContext()
+	tagName := getTagName(ctx.Option)
+	dec, err := decoder.CompileToGetDecoder(header.typ, tagName)
 	if err != nil {
 		return err
 	}
-	ctx := decoder.TakeRuntimeContext()
 	ctx.Buf = src
 	ctx.Option.Flags = 0
 	for _, optFunc := range optFuncs {
@@ -62,11 +63,12 @@ func unmarshalContext(ctx context.Context, data []byte, v interface{}, optFuncs 
 	if err := validateType(header.typ, uintptr(header.ptr)); err != nil {
 		return err
 	}
-	dec, err := decoder.CompileToGetDecoder(header.typ)
+	rctx := decoder.TakeRuntimeContext()
+	tagName := getTagName(rctx.Option)
+	dec, err := decoder.CompileToGetDecoder(header.typ, tagName)
 	if err != nil {
 		return err
 	}
-	rctx := decoder.TakeRuntimeContext()
 	rctx.Buf = src
 	rctx.Option.Flags = 0
 	rctx.Option.Flags |= decoder.ContextOption
@@ -92,12 +94,13 @@ func unmarshalNoEscape(data []byte, v interface{}, optFuncs ...DecodeOptionFunc)
 	if err := validateType(header.typ, uintptr(header.ptr)); err != nil {
 		return err
 	}
-	dec, err := decoder.CompileToGetDecoder(header.typ)
+	ctx := decoder.TakeRuntimeContext()
+	tagName := getTagName(ctx.Option)
+	dec, err := decoder.CompileToGetDecoder(header.typ, tagName)
 	if err != nil {
 		return err
 	}
 
-	ctx := decoder.TakeRuntimeContext()
 	ctx.Buf = src
 	ctx.Option.Flags = 0
 	for _, optFunc := range optFuncs {
@@ -142,6 +145,13 @@ func validateType(typ *runtime.Type, p uintptr) error {
 	return nil
 }
 
+func getTagName(option *decoder.Option) string {
+	if option.TagName != "" {
+		return option.TagName
+	}
+	return "json"
+}
+
 // NewDecoder returns a new decoder that reads from r.
 //
 // The decoder introduces its own buffering and may
@@ -181,6 +191,7 @@ func (d *Decoder) DecodeWithOption(v interface{}, optFuncs ...DecodeOptionFunc) 
 	typ := header.typ
 	ptr := uintptr(header.ptr)
 	typeptr := uintptr(unsafe.Pointer(typ))
+	tagName := getTagName(d.s.Option)
 	// noescape trick for header.typ ( reflect.*rtype )
 	copiedType := *(**runtime.Type)(unsafe.Pointer(&typeptr))
 
@@ -188,7 +199,7 @@ func (d *Decoder) DecodeWithOption(v interface{}, optFuncs ...DecodeOptionFunc) 
 		return err
 	}
 
-	dec, err := decoder.CompileToGetDecoder(typ)
+	dec, err := decoder.CompileToGetDecoder(typ, tagName)
 	if err != nil {
 		return err
 	}

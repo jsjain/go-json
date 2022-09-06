@@ -54,6 +54,43 @@ func ExampleUnmarshal() {
 	// [{Name:Platypus Order:Monotremata} {Name:Quoll Order:Dasyuromorphia}]
 }
 
+func ExampleUnmarshalStruct() {
+	type TestStruct struct {
+		Name string `json:"name" noren:"nm"`
+		Age  string `json:"age" noren:"ag"`
+	}
+	var jsonBlob = []byte(`[
+	{"nm": "Platypus", "ag": "Monotremata"},
+	{"nm": "Quoll",    "ag": "Dasyuromorphia"}
+]`)
+	var animals []TestStruct
+	err := json.Unmarshal(jsonBlob, &animals)
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+	fmt.Printf("%+v", animals)
+	// Output:
+	// [{Name:Platypus Age:Monotremata} {Name:Quoll Age:Dasyuromorphia}]
+}
+
+func ExampleMarshalStruct() {
+	type TestStruct struct {
+		Name string `json:"name" noren:"nm"`
+		Age  string `json:"age" noren:"ag"`
+	}
+	animals := TestStruct{
+		Name: "Platypus",
+		Age:  "Monotremata",
+	}
+	byts, err := json.Marshal(animals)
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+	fmt.Printf("%s", string(byts))
+	// Output:
+	// {"nm":"Platypus","ag":"Monotremata"}
+}
+
 // This example uses a Decoder to decode a stream of distinct JSON values.
 func ExampleDecoder() {
 	const jsonStream = `
