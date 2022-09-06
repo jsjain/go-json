@@ -295,6 +295,20 @@ func (u *unmarshalJSON) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+func Test_unmarshalCustomTag(t *testing.T) {
+	type v struct {
+		Name string `cus:"n" json:"name"`
+		Age  string `cus:"a" json:"age"`
+		ID   string `cus:"no" json:"id"`
+	}
+	content := []byte(`{"n": "name", "a": "age", "no": "id"}`)
+	var v1 v
+	json.UnmarshalWithOption(content, &v1, json.DecodeWithTag("cus"))
+	assertEq(t, "v1.Name", "name", v1.Name)
+	assertEq(t, "v1.Age", "age", v1.Age)
+	assertEq(t, "v1.ID", "id", v1.ID)
+}
+
 func Test_UnmarshalJSON(t *testing.T) {
 	t.Run("*struct", func(t *testing.T) {
 		var v unmarshalJSON
