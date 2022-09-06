@@ -6,11 +6,11 @@ import (
 	"os"
 	"unsafe"
 
-	"github.com/goccy/go-json/internal/encoder"
-	"github.com/goccy/go-json/internal/encoder/vm"
-	"github.com/goccy/go-json/internal/encoder/vm_color"
-	"github.com/goccy/go-json/internal/encoder/vm_color_indent"
-	"github.com/goccy/go-json/internal/encoder/vm_indent"
+	"github.com/jsjain/go-json/internal/encoder"
+	"github.com/jsjain/go-json/internal/encoder/vm"
+	"github.com/jsjain/go-json/internal/encoder/vm_color"
+	"github.com/jsjain/go-json/internal/encoder/vm_color_indent"
+	"github.com/jsjain/go-json/internal/encoder/vm_indent"
 )
 
 // An Encoder writes JSON values to an output stream.

@@ -9,7 +9,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/goccy/go-json"
+	"github.com/jsjain/go-json"
 )
 
 type Size int

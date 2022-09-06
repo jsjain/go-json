@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/goccy/go-json"
+	"github.com/jsjain/go-json"
 )
 
 func TestCoverNumber(t *testing.T) {

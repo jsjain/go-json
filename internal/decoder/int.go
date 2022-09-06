@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"unsafe"
 
-	"github.com/goccy/go-json/internal/errors"
-	"github.com/goccy/go-json/internal/runtime"
+	"github.com/jsjain/go-json/internal/errors"
+	"github.com/jsjain/go-json/internal/runtime"
 )
 
 type intDecoder struct {
