@@ -35,15 +35,15 @@ func unmarshal(data []byte, v interface{}, optFuncs ...DecodeOptionFunc) error {
 		return err
 	}
 	ctx := decoder.TakeRuntimeContext()
-	tagName := getTagName(ctx.Option)
-	dec, err := decoder.CompileToGetDecoder(header.typ, tagName)
-	if err != nil {
-		return err
-	}
 	ctx.Buf = src
 	ctx.Option.Flags = 0
 	for _, optFunc := range optFuncs {
 		optFunc(ctx.Option)
+	}
+	tagName := getTagName(ctx.Option)
+	dec, err := decoder.CompileToGetDecoder(header.typ, tagName)
+	if err != nil {
+		return err
 	}
 	cursor, err := dec.Decode(ctx, 0, 0, header.ptr)
 	if err != nil {
