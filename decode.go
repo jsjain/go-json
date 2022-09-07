@@ -191,6 +191,10 @@ func (d *Decoder) DecodeWithOption(v interface{}, optFuncs ...DecodeOptionFunc) 
 	typ := header.typ
 	ptr := uintptr(header.ptr)
 	typeptr := uintptr(unsafe.Pointer(typ))
+	s := d.s
+	for _, optFunc := range optFuncs {
+		optFunc(s.Option)
+	}
 	tagName := getTagName(d.s.Option)
 	// noescape trick for header.typ ( reflect.*rtype )
 	copiedType := *(**runtime.Type)(unsafe.Pointer(&typeptr))
@@ -205,10 +209,6 @@ func (d *Decoder) DecodeWithOption(v interface{}, optFuncs ...DecodeOptionFunc) 
 	}
 	if err := d.s.PrepareForDecode(); err != nil {
 		return err
-	}
-	s := d.s
-	for _, optFunc := range optFuncs {
-		optFunc(s.Option)
 	}
 	if err := dec.DecodeStream(s, 0, header.ptr); err != nil {
 		return err

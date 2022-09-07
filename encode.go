@@ -143,11 +143,11 @@ func marshal(v interface{}, optFuncs ...EncodeOptionFunc) ([]byte, error) {
 
 	ctx.Option.Flag = 0
 	ctx.Option.Flag |= (encoder.HTMLEscapeOption | encoder.NormalizeUTF8Option)
-	for _, optFunc := range optFuncs {
-		optFunc(ctx.Option)
-	}
 	if ctx.Option.TagName == "" {
 		ctx.Option.TagName = "json"
+	}
+	for _, optFunc := range optFuncs {
+		optFunc(ctx.Option)
 	}
 
 	buf, err := encode(ctx, v)

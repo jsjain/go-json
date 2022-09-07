@@ -27,13 +27,13 @@ func newEmptyInterfaceDecoder(structName, fieldName, tagName string) *interfaceD
 		typ:        emptyInterfaceType,
 		structName: structName,
 		fieldName:  fieldName,
-		floatDecoder: newFloatDecoder(structName, fieldName, func(p unsafe.Pointer, v float64) {
+		floatDecoder: newFloatDecoder(structName, fieldName, tagName, func(p unsafe.Pointer, v float64) {
 			*(*interface{})(p) = v
 		}),
-		numberDecoder: newNumberDecoder(structName, fieldName, func(p unsafe.Pointer, v json.Number) {
+		numberDecoder: newNumberDecoder(structName, fieldName, tagName, func(p unsafe.Pointer, v json.Number) {
 			*(*interface{})(p) = v
 		}),
-		stringDecoder: newStringDecoder(structName, fieldName),
+		stringDecoder: newStringDecoder(structName, fieldName, tagName),
 	}
 	ifaceDecoder.sliceDecoder = newSliceDecoder(
 		ifaceDecoder,
@@ -55,7 +55,7 @@ func newEmptyInterfaceDecoder(structName, fieldName, tagName string) *interfaceD
 
 func newInterfaceDecoder(typ *runtime.Type, structName, fieldName, tagName string) *interfaceDecoder {
 	emptyIfaceDecoder := newEmptyInterfaceDecoder(structName, fieldName, tagName)
-	stringDecoder := newStringDecoder(structName, fieldName)
+	stringDecoder := newStringDecoder(structName, fieldName, tagName)
 	return &interfaceDecoder{
 		typ:        typ,
 		structName: structName,
@@ -75,10 +75,10 @@ func newInterfaceDecoder(typ *runtime.Type, structName, fieldName, tagName strin
 			structName,
 			fieldName,
 		),
-		floatDecoder: newFloatDecoder(structName, fieldName, func(p unsafe.Pointer, v float64) {
+		floatDecoder: newFloatDecoder(structName, fieldName, tagName, func(p unsafe.Pointer, v float64) {
 			*(*interface{})(p) = v
 		}),
-		numberDecoder: newNumberDecoder(structName, fieldName, func(p unsafe.Pointer, v json.Number) {
+		numberDecoder: newNumberDecoder(structName, fieldName, tagName, func(p unsafe.Pointer, v json.Number) {
 			*(*interface{})(p) = v
 		}),
 		stringDecoder: stringDecoder,

@@ -20,11 +20,11 @@ func byteUnmarshalerSliceDecoder(typ *runtime.Type, structName, fieldName, tagNa
 	var unmarshalDecoder Decoder
 	switch {
 	case runtime.PtrTo(typ).Implements(unmarshalJSONType):
-		unmarshalDecoder = newUnmarshalJSONDecoder(runtime.PtrTo(typ), structName, fieldName)
+		unmarshalDecoder = newUnmarshalJSONDecoder(runtime.PtrTo(typ), structName, fieldName, tagName)
 	case runtime.PtrTo(typ).Implements(unmarshalTextType):
-		unmarshalDecoder = newUnmarshalTextDecoder(runtime.PtrTo(typ), structName, fieldName)
+		unmarshalDecoder = newUnmarshalTextDecoder(runtime.PtrTo(typ), structName, fieldName, tagName)
 	default:
-		unmarshalDecoder, _ = compileUint8(typ, structName, fieldName)
+		unmarshalDecoder, _ = compileUint8(typ, structName, fieldName, tagName)
 	}
 	return newSliceDecoder(unmarshalDecoder, typ, 1, structName, fieldName, tagName)
 }
@@ -33,7 +33,7 @@ func newBytesDecoder(typ *runtime.Type, structName, fieldName, tagName string) *
 	return &bytesDecoder{
 		typ:           typ,
 		sliceDecoder:  byteUnmarshalerSliceDecoder(typ, structName, fieldName, tagName),
-		stringDecoder: newStringDecoder(structName, fieldName),
+		stringDecoder: newStringDecoder(structName, fieldName, tagName),
 		structName:    structName,
 		fieldName:     fieldName,
 	}

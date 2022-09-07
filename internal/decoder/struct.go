@@ -51,10 +51,10 @@ func init() {
 	}
 }
 
-func newStructDecoder(structName, fieldName string, fieldMap map[string]*structFieldSet) *structDecoder {
+func newStructDecoder(structName, fieldName, tagName string, fieldMap map[string]*structFieldSet) *structDecoder {
 	return &structDecoder{
 		fieldMap:         fieldMap,
-		stringDecoder:    newStringDecoder(structName, fieldName),
+		stringDecoder:    newStringDecoder(structName, fieldName, tagName),
 		structName:       structName,
 		fieldName:        fieldName,
 		keyDecoder:       decodeKey,
