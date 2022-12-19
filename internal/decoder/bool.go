@@ -1,6 +1,7 @@
 package decoder
 
 import (
+	"fmt"
 	"unsafe"
 
 	"github.com/jsjain/go-json/internal/errors"
@@ -76,4 +77,8 @@ func (d *boolDecoder) Decode(ctx *RuntimeContext, cursor, depth int64, p unsafe.
 		return cursor, nil
 	}
 	return 0, errors.ErrUnexpectedEndOfJSON("bool", cursor)
+}
+
+func (d *boolDecoder) DecodePath(ctx *RuntimeContext, cursor, depth int64) ([][]byte, int64, error) {
+	return nil, 0, fmt.Errorf("json: bool decoder does not support decode path")
 }

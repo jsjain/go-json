@@ -3,6 +3,7 @@ package decoder
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"unsafe"
 
 	"github.com/jsjain/go-json/internal/errors"
@@ -98,4 +99,8 @@ func (d *unmarshalJSONDecoder) Decode(ctx *RuntimeContext, cursor, depth int64, 
 		}
 	}
 	return end, nil
+}
+
+func (d *unmarshalJSONDecoder) DecodePath(ctx *RuntimeContext, cursor, depth int64) ([][]byte, int64, error) {
+	return nil, 0, fmt.Errorf("json: unmarshal json decoder does not support decode path")
 }
