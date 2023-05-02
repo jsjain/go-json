@@ -467,19 +467,19 @@ func NewPathDecoder() Decoder {
 		typ:        emptyInterfaceType,
 		structName: "",
 		fieldName:  "",
-		floatDecoder: newFloatDecoder("", "", func(p unsafe.Pointer, v float64) {
+		floatDecoder: newFloatDecoder("", "", "", func(p unsafe.Pointer, v float64) {
 			*(*interface{})(p) = v
 		}),
-		numberDecoder: newNumberDecoder("", "", func(p unsafe.Pointer, v json.Number) {
+		numberDecoder: newNumberDecoder("", "", "", func(p unsafe.Pointer, v json.Number) {
 			*(*interface{})(p) = v
 		}),
-		stringDecoder: newStringDecoder("", ""),
+		stringDecoder: newStringDecoder("", "", ""),
 	}
 	ifaceDecoder.sliceDecoder = newSliceDecoder(
 		ifaceDecoder,
 		emptyInterfaceType,
 		emptyInterfaceType.Size(),
-		"", "",
+		"", "", "",
 	)
 	ifaceDecoder.mapDecoder = newMapDecoder(
 		interfaceMapType,

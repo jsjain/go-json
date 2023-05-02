@@ -64,7 +64,7 @@ func ExampleUnmarshalStruct() {
 	{"nm": "Quoll",    "ag": "Dasyuromorphia"}
 ]`)
 	var animals []TestStruct
-	err := json.Unmarshal(jsonBlob, &animals)
+	err := json.UnmarshalWithOption(jsonBlob, &animals, json.DecodeWithTag("noren"))
 	if err != nil {
 		fmt.Println("error:", err)
 	}
