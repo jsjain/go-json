@@ -2642,3 +2642,84 @@ func TestCustomMarshalForMapKey(t *testing.T) {
 	assertErr(t, err)
 	assertEq(t, "custom map key", string(expected), string(got))
 }
+
+func TestIssue391(t *testing.T) {
+	type A struct {
+		X string `json:"x,omitempty"`
+	}
+	type B struct {
+		A
+	}
+	type C struct {
+		X []int `json:"x,omitempty"`
+	}
+	for _, tc := range []struct {
+		name string
+		in   interface{}
+		out  string
+	}{
+		{in: struct{ B }{}, out: "{}"},
+		{in: struct {
+			B
+			Y string `json:"y"`
+		}{}, out: `{"y":""}`},
+		{in: struct {
+			Y string `json:"y"`
+			B
+		}{}, out: `{"y":""}`},
+		{in: struct{ C }{}, out: "{}"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			b, err := json.Marshal(tc.in)
+			assertErr(t, err)
+			assertEq(t, "unexpected result", tc.out, string(b))
+		})
+	}
+}
+
+func TestIssue417(t *testing.T) {
+	x := map[string]string{
+		"b": "b",
+		"a": "a",
+	}
+	b, err := json.MarshalIndentWithOption(x, "", " ", json.UnorderedMap())
+	assertErr(t, err)
+
+	var y map[string]string
+	err = json.Unmarshal(b, &y)
+	assertErr(t, err)
+
+	assertEq(t, "key b", "b", y["b"])
+	assertEq(t, "key a", "a", y["a"])
+}
+
+func TestIssue426(t *testing.T) {
+	type I interface {
+		Foo()
+	}
+	type A struct {
+		I
+		Val string
+	}
+	var s A
+	s.Val = "456"
+
+	b, _ := json.Marshal(s)
+	assertEq(t, "unexpected result", `{"I":null,"Val":"456"}`, string(b))
+}
+
+func TestIssue441(t *testing.T) {
+	type A struct {
+		Y string `json:"y,omitempty"`
+	}
+
+	type B struct {
+		X *int `json:"x,omitempty"`
+		A
+		Z int `json:"z,omitempty"`
+	}
+
+	b, err := json.Marshal(B{})
+	assertErr(t, err)
+	assertEq(t, "unexpected result", "{}", string(b))
+}

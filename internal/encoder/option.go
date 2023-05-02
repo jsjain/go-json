@@ -24,6 +24,7 @@ type Option struct {
 	ColorScheme *ColorScheme
 	Context     context.Context
 	DebugOut    io.Writer
+	DebugDOTOut io.WriteCloser
 }
 
 type EncodeFormat struct {
